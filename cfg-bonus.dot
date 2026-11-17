@@ -1,0 +1,54 @@
+digraph bonus_cfg {
+  rankdir=TB; bgcolor="white";
+  graph [fontname="DejaVu Sans", fontsize=13, nodesep=0.4, ranksep=0.5, labelloc="t",
+         label="bonus(int[] attendance, int threshold) — Control Flow Graph\nЗангилаа: DataFlowTargets.java-гийн мөрийн дугаар · Ирмэг: түүнийг дайрах тестийн метод"];
+  node [fontname="DejaVu Sans", fontsize=10];
+  edge [fontname="DejaVu Sans", fontsize=8, color="#555555"];
+
+  ENTRY [shape=ellipse, style=filled, fillcolor="#dbeafe",
+         label="31: bonus(attendance, threshold)\ndef attendance · def threshold"];
+  D32 [shape=diamond, style=filled, fillcolor="#fef3c7",
+       label="32: attendance == null || threshold < 0 ?\np-use attendance · p-use threshold"];
+  THROW [shape=box, style="filled,rounded", fillcolor="#fecaca",
+         label="33: throw IllegalArgumentException"];
+  INIT [shape=box, style=filled, fillcolor="#e0e7ff",
+        label="35: def present = 0\l36: def streak = 0\l37: def best = 0\l"];
+  D38 [shape=diamond, style=filled, fillcolor="#fef3c7",
+       label="38: for (int a : attendance)\np-use attendance · def a"];
+  D39 [shape=diamond, style=filled, fillcolor="#fef3c7", label="39: a > 0 ?\np-use a"];
+  BODY [shape=box, style=filled, fillcolor="#e0e7ff",
+        label="40: def present · c-use present\l41: def streak · c-use streak\l"];
+  D42 [shape=diamond, style=filled, fillcolor="#fef3c7",
+       label="42: streak > best ?\np-use streak · p-use best"];
+  N43 [shape=box, style=filled, fillcolor="#e0e7ff", label="43: def best · c-use streak"];
+  N46 [shape=box, style=filled, fillcolor="#fde68a",
+       label="46: def streak = 0\n(KILL: 36 ба 46-гийн def-үүд\n42, 43-д хүрэхгүй)"];
+  N49 [shape=box, style=filled, fillcolor="#e0e7ff", label="49: def score = 0"];
+  D50 [shape=diamond, style=filled, fillcolor="#fef3c7",
+       label="50: present >= threshold ?\np-use present · p-use threshold"];
+  N51 [shape=box, style=filled, fillcolor="#fde68a", label="51: def score = 5\n(KILL of def 49)"];
+  D53 [shape=diamond, style=filled, fillcolor="#fef3c7", label="53: best >= 5 ?\np-use best"];
+  N54 [shape=box, style=filled, fillcolor="#e0e7ff", label="54: def score · c-use score"];
+  N56 [shape=box, style="filled,rounded", fillcolor="#d1fae5", label="56: return score\nc-use score"];
+
+  ENTRY -> D32;
+  D32 -> THROW [label=" ҮНЭН\l bonus_nullAttendance_throwsIllegalArgument\l bonus_negativeThreshold_throwsIllegalArgument\l", color="#b91c1c", fontcolor="#b91c1c"];
+  D32 -> INIT  [label=" ХУДАЛ\l B1, B2, B5, B6\l"];
+  INIT -> D38;
+  D38 -> D39 [label=" дараагийн элемент БИЙ\l bonus_streakResetThenLongStreak_returns8\l bonus_singleAbsentDay_belowThreshold_returns0\l bonus_fiveStreakBelowThreshold_returns3\l", color="#1d4ed8", fontcolor="#1d4ed8"];
+  D38 -> N49 [label=" элемент ДУУССАН\l bonus_emptyArray_meetsThreshold_returns5\l (бусад нь давталтын төгсгөлд)\l"];
+  D39 -> BODY [label=" ҮНЭН (a > 0)\l bonus_streakResetThenLongStreak_returns8\l bonus_fiveStreakBelowThreshold_returns3\l", color="#1d4ed8", fontcolor="#1d4ed8"];
+  D39 -> N46  [label=" ХУДАЛ (a == 0)\l bonus_streakResetThenLongStreak_returns8\l bonus_singleAbsentDay_belowThreshold_returns0\l"];
+  BODY -> D42;
+  D42 -> N43 [label=" ҮНЭН\l bonus_streakResetThenLongStreak_returns8\l bonus_fiveStreakBelowThreshold_returns3\l", color="#1d4ed8", fontcolor="#1d4ed8"];
+  D42 -> D38 [label=" ХУДАЛ (streak <= best)\l bonus_streakResetThenLongStreak_returns8\l (индекс 2: streak=1, best=1)\l"];
+  N43 -> D38;
+  N46 -> D38;
+  N49 -> D50;
+  D50 -> N51 [label=" ҮНЭН\l bonus_streakResetThenLongStreak_returns8\l bonus_emptyArray_meetsThreshold_returns5\l", color="#1d4ed8", fontcolor="#1d4ed8"];
+  D50 -> D53 [label=" ХУДАЛ\l bonus_singleAbsentDay_belowThreshold_returns0\l bonus_fiveStreakBelowThreshold_returns3\l"];
+  N51 -> D53;
+  D53 -> N54 [label=" ҮНЭН (best >= 5)\l bonus_streakResetThenLongStreak_returns8\l bonus_fiveStreakBelowThreshold_returns3\l", color="#1d4ed8", fontcolor="#1d4ed8"];
+  D53 -> N56 [label=" ХУДАЛ\l bonus_singleAbsentDay_belowThreshold_returns0\l bonus_emptyArray_meetsThreshold_returns5\l"];
+  N54 -> N56;
+}
