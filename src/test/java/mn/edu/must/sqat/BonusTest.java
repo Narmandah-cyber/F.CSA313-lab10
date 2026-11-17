@@ -71,4 +71,20 @@ class BonusTest {
         // best=5 -> 53 ҮНЭН тул def 49 нь c-use 54-д хүрч, def 54 нь c-use 56-д хүрнэ.
         assertEquals(3, DataFlowTargets.bonus(new int[]{1, 1, 1, 1, 1}, 10));
     }
+
+    // ===== Хэсэг C: M2-ийг унагах тест =====
+
+    @Test
+    @DisplayName("B7 [1,0,1,1,1,1] thr=5 -> 5 | kills M2: best must come from streak, not present")
+    void bonus_gapThenFourStreak_doesNotReachBonus() {
+        // present=5, харин хамгийн урт ДАРААЛСАН цуваа нь 4 -> best=4 < 5
+        // тул 53 ХУДАЛ бөгөөд урамшуулал нэмэгдэхгүй, хариу 5.
+        //
+        // M2 (best = present) үед: best нь цувааны урт биш, ИРСЭН ӨДРИЙН ТОО
+        // болж өсдөг тул 5 хүрч, 53 ҮНЭН болж 8 буцаана.
+        // Өмнөх 6 тестэд present ба streak хоёр best шинэчлэгдэх мөч бүрт
+        // ижил утгатай байсан тул зөрүү харагдаагүй — энэ тест тэр тэнцвэрийг
+        // ЗОРИУД эвдэж, завсартай урт цувааг ашиглана.
+        assertEquals(5, DataFlowTargets.bonus(new int[]{1, 0, 1, 1, 1, 1}, 5));
+    }
 }
