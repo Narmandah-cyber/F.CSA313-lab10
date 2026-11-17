@@ -1,0 +1,1 @@
+/Users/narmandah/Uni/F.CSA313-lab10/src/main/java/mn/edu/must/sqat/DataFlowTargets.java:49:	UnusedLocalVariable:	Avoid unused local variables such as 'total'.
